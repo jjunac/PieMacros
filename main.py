@@ -4,9 +4,9 @@ import sys
 
 SCREEN_W, SCREEN_H = pyautogui.size()
 
-SIZE   = int(SCREEN_W*.3)
+SIZE   = int(SCREEN_W*.25)
 CENTER = int(SIZE/2)
-BORDER = int(SIZE*.03)
+BORDER = 2
 RADIUS = int(CENTER - BORDER)
 
 mouse_pos = pyautogui.position()
@@ -29,8 +29,6 @@ root.bind("<FocusOut>", lambda e: exit(0))
 
 def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
-
-
 tk.Canvas.create_circle = _create_circle
 
 
@@ -39,57 +37,32 @@ def _create_circle_arc(self, x, y, r, **kwargs):
         kwargs["extent"] = kwargs["end"] - kwargs["start"]
         del kwargs["end"]
     return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
-
-
 tk.Canvas.create_circle_arc = _create_circle_arc
-
-# class Choice(tk.Frame):
-#     def __init__(self, *args, **kwargs):
-#         tk.Frame.__init__(self, *args, **kwargs)
-    
-#     def draw(self, i, n):
-#         start = 90
-#         step = 360 / n
-#         self.arc = self.master.create_circle_arc(CENTER, CENTER, RADIUS,
-#                                    start=start - i*step,
-#                                    extent=-step,
-#                                    fill="blue",
-#                                    outline="white",
-#                                    width=BORDER)
-
-#         self.arc.bind("<Enter>", self.on_enter)
-#         self.arc.bind("<Leave>", self.on_leave)
-
-#     def on_enter(self, event):
-#         self.arc.configure(fill="green")
-
-#     def on_leave(self, enter):
-#         self.arc.configure(fill="blue")
-
 
 class Selector:
     def __init__(self, canvas):
         self.canvas = canvas
         # self.choices = [Choice(canvas) for _ in range(5)]
 
+    def on_motion(self, e):
+        canvas.itemconfig(self.selected, fill="blue")
+        self.selected = canvas.find_closest(e.x, e.y)
+        canvas.itemconfig(self.selected, fill="green")
+
     def draw(self, size):
         start = 90
-        step = 360 / size
+        step = 360/size
         for i in range(size):
-            arc = self.canvas.create_circle_arc(CENTER, CENTER, RADIUS,
-                                                start=start - i * step,
-                                                extent=-step,
-                                                fill="blue",
-                                                outline="white",
-                                                width=BORDER)
-            canvas.bind("<Enter>", lambda e: canvas.itemconfig(canvas.find_closest(root.winfo_pointerx() - root.winfo_rootx(), root.winfo_pointery() - root.winfo_rooty()), fill="green"))
-            canvas.bind("<Leave>", lambda e: canvas.itemconfig(canvas.find_closest(root.winfo_pointerx() - root.winfo_rootx(), root.winfo_pointery() - root.winfo_rooty()), fill="blue"))
-        # for i, c in enumerate(self.choices):
-        #     c.draw(i, len(self.choices))
-        self.canvas.create_circle(CENTER, CENTER, SIZE * .15, fill="white", width=0)
+            self.canvas.create_circle_arc(CENTER, CENTER, RADIUS,
+                                          start=start - i * step,
+                                          extent=-step,
+                                          fill="blue",
+                                          outline="white",
+                                          width=BORDER)
+        self.selected = self.canvas.create_circle(CENTER, CENTER, SIZE * .15, fill="green", width=0)
 
+        canvas.bind("<Motion>", lambda e: self.on_motion(e))
 
 Selector(canvas).draw(5)
 
-# root.pack()
 root.mainloop()
