@@ -7,10 +7,11 @@ from pathlib import Path
 
 SCREEN_W, SCREEN_H = pyautogui.size()
 
-SIZE   = int(SCREEN_W*.25)
-CENTER = int(SIZE/2)
-BORDER = 2
-RADIUS = int(CENTER - BORDER)
+SIZE        = int(SCREEN_W*.25)
+CENTER      = int(SIZE/2)
+BORDER      = 2
+RADIUS      = int(CENTER - BORDER)
+BACK_RADIUS = int(RADIUS*.3)
 
 MATERIAL_COLORS = yaml.load(Path("material_colors.yaml").read_text())
 SELECTOR_COLORS = ["red", "pink", "purple", "deepPurple", "indigo", "blue", "lightBlue", "cyan", "teal", "green", 
@@ -52,44 +53,78 @@ class Choice:
     def draw(self, canvas, i, n):
         extent = -360/n
         start = 90 + i*extent
+        self.color = MATERIAL_COLORS[SELECTOR_COLORS[round(len(SELECTOR_COLORS)*i/n)]]
+        self.canvas = canvas
         self.canvas_id = canvas.create_circle_arc(CENTER, CENTER, RADIUS,
-                                          start=start,
-                                          extent=extent,
-                                          fill=MATERIAL_COLORS[SELECTOR_COLORS[round(len(SELECTOR_COLORS)*i/n)]]["500"],
-                                          outline="white",
-                                          width=BORDER)
+                                                  start=start,
+                                                  extent=extent,
+                                                  fill=self.get_base_color(),
+                                                  outline="white",
+                                                  width=BORDER)
         text_pos = (CENTER + cos(radians(start + extent/2))*RADIUS*0.7, CENTER - sin(radians(start + extent/2))*RADIUS*0.7)
-        print((i, *text_pos))
         canvas.create_text(*text_pos,
                            text=self.desc,
                            fill="white",
                            font=('Helvetica', '16'))
         return self.canvas_id
 
+    def get_base_color(self):
+        return self.color["400"]
+
+    def get_accent_color(self):
+        return self.color["A700"]
+
+    def on_enter(self):
+        self.canvas.itemconfig(self.canvas_id, fill=self.get_accent_color())
+
+    def on_leave(self):
+        self.canvas.itemconfig(self.canvas_id, fill=self.get_base_color())
+
+class BackChoice(Choice):
+    def __init__(self):
+        Choice.__init__(self, "Back")
+
+    def draw(self, canvas):
+        self.color = MATERIAL_COLORS["grey"]
+        self.canvas = canvas
+        self.canvas_id = self.canvas.create_circle(CENTER, CENTER, SIZE*.15, fill=self.get_base_color(), outline="white", width=BORDER)
+        return self.canvas_id
+
+    def get_accent_color(self):
+        return self.color["600"]
+
 class Selector:
     def __init__(self, canvas):
         self.canvas = canvas
+        self.back_choice = BackChoice()
         self.choices = []
-        self.id_to_choices = {}
 
     def add_choice(self, choice):
         self.choices.append(choice)
         return self
-
+    
     def on_motion(self, e):
-        canvas.itemconfig(self.selected, fill="blue")
-        self.selected = canvas.find_closest(e.x, e.y)[0]
-        canvas.itemconfig(self.selected, fill="green")
+        curr_angle = atan2(e.y - CENTER, e.x - CENTER)
+        if abs(cos(curr_angle)*BACK_RADIUS) > abs(e.x - CENTER):
+            curr_choice = self.back_choice
+        else:
+            i = int(((degrees(curr_angle) + 90) / (360/len(self.choices)) + len(self.choices)) % len(self.choices))
+            curr_choice = self.choices[i]
+
+        if curr_choice != self.selected:
+            self.selected.on_leave()
+            self.selected = curr_choice
+            self.selected.on_enter()
 
     def on_click(self, e):
-        print(self.id_to_choices[self.selected].desc)
+        print(self.selected.desc)
 
     def draw(self):
         start = 90
         for i, c in enumerate(self.choices):
             idd = c.draw(canvas, i, len(self.choices))
-            self.id_to_choices[idd] = c
-        self.selected = self.canvas.create_circle(CENTER, CENTER, SIZE * .15, fill="green", width=0)
+        self.selected = self.back_choice
+        self.back_choice.draw(canvas)
 
         canvas.bind("<Motion>", lambda e: self.on_motion(e))
         canvas.bind("<Button-1>", lambda e: self.on_click(e))
