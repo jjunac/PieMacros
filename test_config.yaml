@@ -1,0 +1,10 @@
+- name: Mouse sub
+  subchoices:
+    - name: Right
+      action: move_mouse 1700 400
+    - name: Left
+      action: move_mouse 200 400
+- name: Hello
+  action: alert Hello
+
+

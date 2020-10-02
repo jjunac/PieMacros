@@ -4,7 +4,7 @@ from math import *
 class Choice:
     def __init__(self, **kwargs):
         self.name = kwargs["name"]
-        self.action = kwargs["action"]
+        self.action = kwargs.get("action", None)
 
     def get_base_color(self): return self.color["400"]
 

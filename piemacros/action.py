@@ -10,14 +10,14 @@ class Action(ABC):
 
 class AlertAction(Action):
     def __init__(self, args):
-        self.text = args
+        self.text = " ".join(args)
 
     def execute(self):
         tk.messagebox.showinfo(title="PieMacros", message=self.text)
 
 class MoveMouseAction(Action):
     def __init__(self, args):
-        self.x, self.y = [int(a.strip()) for a in args.split(',')]
+        self.x, self.y = [int(a.strip()) for a in args]
 
     def execute(self):
         pyautogui.moveTo(self.x, self.y)
@@ -26,7 +26,7 @@ class MoveMouseAction(Action):
 
 _action_types= {
     "alert": AlertAction,
-    "move mouse": MoveMouseAction,
+    "move_mouse": MoveMouseAction,
 }
 
 def create_action(type, args):

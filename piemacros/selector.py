@@ -10,6 +10,11 @@ class Selector:
         self.choices = []
         self.choice_stack = []
 
+    def add_choices(self, choices):
+        for c in choices:
+            self.add_choice(c)
+        return self
+
     def add_choice(self, choice):
         choice.set_selector(self)
         self.choices.append(choice)

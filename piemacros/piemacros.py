@@ -1,10 +1,11 @@
 import tkinter as tk
 
-import tkutils
 from action import *
 from choice import *
-from selector import Selector
 from constants import *
+from selector import Selector
+import config
+import tkutils
 
 tkutils.decorate()
 
@@ -23,17 +24,8 @@ root.wm_attributes("-transparentcolor", "black")
 root.bind('<Escape>', lambda e: exit(0))
 root.bind("<FocusOut>", lambda e: exit(0))
 
-subchoices = [
-    Choice(name="Test 1", action=create_action("alert", "hello")),
-    Choice(name="Test 2", action=create_action("move mouse", "200,200"))
-]
+cp = config.ConfigParser("test_config.yaml").parse()
 
-Selector(canvas).add_choice(Choice(name="Test 1", action=create_action("alert", "hello"))) \
-                .add_choice(Choice(name="Test 2", action=create_action("move mouse", "200,200"))) \
-                .add_choice(CompositeChoice(name="Test 3", action=None, subchoices=subchoices)) \
-                .add_choice(Choice(name="Test 4", action=create_action("alert", "hello"))) \
-                .add_choice(Choice(name="Test 5", action=create_action("alert", "hello"))) \
-                .add_choice(Choice(name="Test 6", action=create_action("alert", "hello"))) \
-                .draw()
+Selector(canvas).add_choices(cp.choices).draw()
 
 root.mainloop()
