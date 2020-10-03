@@ -1,31 +1,31 @@
-import tkinter as tk
+import logging
 
-from action import *
-from choice import *
-from constants import *
-from selector import Selector
-import config
-import tkutils
+from .action import *
+from .choice import *
+from .constants import *
+from .selector import Selector
+from .config import ConfigParser
+from .tkutils import decorate_tkinter
+from .global_hotkey import GlobalHotkey, Modifiers
 
-tkutils.decorate()
+_selector = None
 
-root = tk.Tk()
+def run():
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-canvas = tk.Canvas(root, width=SIZE, height=SIZE, highlightthickness=0, bg="black")
-canvas.grid()
+    decorate_tkinter()
 
-root.overrideredirect(True)
-root.geometry(f"{SIZE}x{SIZE}+{int(MOUSE_POS[0] - CENTER)}+{int(MOUSE_POS[1] - CENTER)}")
-root.lift()
-root.wm_attributes("-topmost", True)
-# root.wm_attributes("-disabled", True)
-root.wm_attributes("-transparentcolor", "black")
+    cp = ConfigParser("test_config.yaml").parse()
 
-root.bind('<Escape>', lambda e: exit(0))
-root.bind("<FocusOut>", lambda e: exit(0))
+    _selector = Selector().add_choices(cp.choices)
+    # _selector.show()
+    GlobalHotkey.register('A', (Modifiers.WIN, Modifiers.SHIFT), lambda: _selector.show())
+    try:
+        GlobalHotkey.listen()
+    finally:
+        GlobalHotkey.unregister_all()
 
-cp = config.ConfigParser("test_config.yaml").parse()
 
-Selector(canvas).add_choices(cp.choices).draw()
 
-root.mainloop()
+# def stop():
+#     _selector.hide()

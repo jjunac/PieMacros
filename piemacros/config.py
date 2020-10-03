@@ -2,8 +2,8 @@ from pathlib import Path
 
 import yaml
 
-import action
-from choice import *
+from . import action
+from  .choice import *
 
 class ConfigParser:
     def __init__(self, filename):

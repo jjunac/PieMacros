@@ -8,7 +8,7 @@
             "name": "PieMacros",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/piemacros/piemacros.py",
+            "program": "${workspaceFolder}/run.py",
             "console": "integratedTerminal"
         }
     ]

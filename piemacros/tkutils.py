@@ -11,6 +11,6 @@ def _create_circle_arc(self, x, y, r, **kwargs):
         del kwargs["end"]
     return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
 
-def decorate():
+def decorate_tkinter():
     tk.Canvas.create_circle = _create_circle
     tk.Canvas.create_circle_arc = _create_circle_arc
