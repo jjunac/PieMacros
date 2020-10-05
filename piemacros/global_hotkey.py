@@ -9,6 +9,7 @@ import logging
 import os
 import sys
 import win32con
+import time
 
 byref = ctypes.byref
 user32 = ctypes.windll.user32
@@ -27,6 +28,7 @@ class Modifiers(IntEnum):
 class GlobalHotkey:
     _hotkey_id = itertools.count(1)
     _callbacks = {}
+    _listening = False
 
     @staticmethod
     def register(key, modifiers, callback):
@@ -37,7 +39,7 @@ class GlobalHotkey:
         #  VK code (either ord ('x') or one of win32con.VK_*)
         id = next(GlobalHotkey._hotkey_id)
         logging.info(f"Registering global hotkey [{id}] with key={key}, modifiers={modifiers}")
-        registered = user32.RegisterHotKey (None, id, sum(modifiers), ord(key))
+        registered = user32.RegisterHotKey(None, id, sum(modifiers), ord(key))
         if not registered:
             logging.error(f"Unable to register [{id}]")
             return -1
@@ -45,20 +47,31 @@ class GlobalHotkey:
         return id
 
     @staticmethod
+    def stop():
+        GlobalHotkey._listening = False
+
+
+    @staticmethod
     def listen():
         # Home-grown Windows message loop: does
         #  just enough to handle the WM_HOTKEY
         #  messages and pass everything else along.
         msg = wintypes.MSG()
-        while user32.GetMessageA(byref(msg), None, 0, 0) != 0:
-            if msg.message == win32con.WM_HOTKEY:
-                if msg.wParam in GlobalHotkey._callbacks:
-                    GlobalHotkey._callbacks[msg.wParam]()
+        GlobalHotkey._listening = True
+        while GlobalHotkey._listening:
+            time.sleep(0.1)
+            retrieved = user32.PeekMessageA(byref(msg), None, win32con.WM_HOTKEY, win32con.WM_HOTKEY, win32con.PM_REMOVE)
+            if not retrieved:
+                continue
+
+            if msg.wParam in GlobalHotkey._callbacks:
+                logging.info(f"Callback [{msg.wParam}] triggered")
+                GlobalHotkey._callbacks[msg.wParam]()
 
             # Pass on to the next global listener
             user32.TranslateMessage(byref(msg))
             user32.DispatchMessageA(byref(msg))
-    
+
     @staticmethod
     def unregister_all():
         for id in GlobalHotkey._callbacks:

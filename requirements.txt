@@ -1,3 +1,4 @@
 pyautogui
 pyyaml
 pywin32
+infi.systray
