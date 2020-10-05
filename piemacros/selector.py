@@ -85,6 +85,8 @@ class Selector:
 
         self.draw()
 
+        self._root.focus_force()
+
         self._root.mainloop()
 
     def hide(self):

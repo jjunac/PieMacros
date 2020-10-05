@@ -10,7 +10,7 @@ class ConfigParser:
         self.filename = filename
 
     def parse(self):
-        config_dict = yaml.load(Path(self.filename).read_text())
+        config_dict = yaml.safe_load(Path(self.filename).read_text())
         self.choices = [self._parse_choice(c) for c in config_dict]
         return self
 
