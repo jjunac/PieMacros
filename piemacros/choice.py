@@ -5,7 +5,7 @@ from .constants import *
 class Choice:
     def __init__(self, **kwargs):
         self.name = kwargs["name"]
-        self.action = kwargs.get("action", None)
+        self.actions = kwargs.get("actions", None)
 
     def get_base_color(self): return self.color["400"]
 
@@ -37,8 +37,8 @@ class Choice:
         return self.canvas_id
 
     def execute(self):
-        self.action.execute()
         self.selector.hide()
+        for a in self.actions: a.execute()
 
 class BackChoice(Choice):
     def __init__(self):

@@ -1,10 +1,24 @@
+- name: Integration tests
+  subchoices:
+    - name: Go on twitter
+      actions:
+        - hotkey: [ctrl, t]
+        - type: twitter.com
+        - type: ['enter']
 - name: Mouse sub
   subchoices:
     - name: Right
-      action: move_mouse 1700 400
+      actions:
+        - mouse_to: 1700 400
+        - wait: 2
+        - mouse_to: 1700 500
+        - wait: 2
+        - mouse_to: 1700 600
     - name: Left
-      action: move_mouse 200 400
+      actions:
+        - mouse_to: 200 400
 - name: Hello
-  action: alert Hello
+  actions:
+    - alert: Hello
 
 

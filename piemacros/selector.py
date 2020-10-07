@@ -3,7 +3,9 @@ import tkinter as tk
 
 from .choice import BackChoice, Choice
 from .constants import *
+from .logging_utils import logger
 
+@logger
 class Selector:
     def __init__(self):
         self._back_choice = BackChoice()
@@ -40,7 +42,7 @@ class Selector:
             self._selected.on_enter()
 
     def on_click(self, e):
-        print(self._selected.name)
+        self._logger.info("Choice selected: %s", self._selected.name)
         self._selected.execute()
 
     def pop_choices(self):
@@ -58,6 +60,7 @@ class Selector:
         self.draw()
 
     def draw(self):
+        self._logger.info("Drawing selector with choices %s", str([c.name for c in self._choices]))
         start = 90
         for i, c in enumerate(self._choices):
             idd = c.draw(i, len(self._choices))
@@ -90,6 +93,7 @@ class Selector:
         self._root.mainloop()
 
     def hide(self):
+        self._logger.info("Closing selector")
         self.reset_choices()
         self._root.destroy()
 

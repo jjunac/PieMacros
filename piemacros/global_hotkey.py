@@ -5,11 +5,12 @@ from ctypes import wintypes
 from enum import IntEnum
 import ctypes
 import itertools
-import logging
 import os
 import sys
 import win32con
 import time
+
+from .logging_utils import logger
 
 byref = ctypes.byref
 user32 = ctypes.windll.user32
@@ -25,6 +26,7 @@ class Modifiers(IntEnum):
     CONTROL = win32con.MOD_CONTROL
     WIN     = win32con.MOD_WIN
 
+@logger
 class GlobalHotkey:
     _hotkey_id = itertools.count(1)
     _callbacks = {}
@@ -38,10 +40,10 @@ class GlobalHotkey:
         #  modifiers (MOD_SHIFT, MOD_ALT, MOD_CONTROL, MOD_WIN)
         #  VK code (either ord ('x') or one of win32con.VK_*)
         id = next(GlobalHotkey._hotkey_id)
-        logging.info(f"Registering global hotkey [{id}] with key={key}, modifiers={modifiers}")
+        GlobalHotkey._logger.info(f"Registering global hotkey [{id}] with key={key}, modifiers={modifiers}")
         registered = user32.RegisterHotKey(None, id, sum(modifiers), ord(key))
         if not registered:
-            logging.error(f"Unable to register [{id}]")
+            GlobalHotkey._logger.error(f"Unable to register [{id}]")
             return -1
         GlobalHotkey._callbacks[id] = callback
         return id
@@ -65,7 +67,7 @@ class GlobalHotkey:
                 continue
 
             if msg.wParam in GlobalHotkey._callbacks:
-                logging.info(f"Callback [{msg.wParam}] triggered")
+                GlobalHotkey._logger.info(f"Callback [{msg.wParam}] triggered")
                 GlobalHotkey._callbacks[msg.wParam]()
 
             # Pass on to the next global listener
@@ -79,5 +81,5 @@ class GlobalHotkey:
     
     @staticmethod
     def unregister(id):
-        logging.info(f"Unregistering global hotkey [{id}]")
+        GlobalHotkey._logger.info(f"Unregistering global hotkey [{id}]")
         user32.UnregisterHotKey(None, id)

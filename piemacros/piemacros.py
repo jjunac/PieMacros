@@ -3,18 +3,18 @@ from infi.systray import SysTrayIcon
 
 from .action import *
 from .choice import *
-from .constants import *
-from .selector import Selector
 from .config import ConfigParser
-from .tkutils import decorate_tkinter
+from .constants import *
 from .global_hotkey import GlobalHotkey, Modifiers
+from .logging_utils import init_logging
+from .selector import Selector
+from .tkutils import decorate_tkinter
 
 _selector = None
 _systray = None
 
 def run():
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-
+    init_logging()
     decorate_tkinter()
 
     cp = ConfigParser("test_config.yaml").parse()
@@ -23,7 +23,7 @@ def run():
     # _selector.show()
 
     def about(systray):
-        print("About")
+        logging.info("About PieMacros...")
 
     menu_options = (('About PieMacros...', None, about),)
 
