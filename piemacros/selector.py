@@ -4,6 +4,7 @@ import tkinter as tk
 from .choice import BackChoice, Choice
 from .constants import *
 from .logging_utils import logger
+from .view_context import ViewContext
 
 @logger
 class Selector:
@@ -27,10 +28,10 @@ class Selector:
         choice.set_selector(self)
         self._choices.append(choice)
         return self
-    
+
     def on_motion(self, e):
-        curr_angle = atan2(e.y - CENTER, e.x - CENTER)
-        if abs(cos(curr_angle)*BACK_RADIUS) > abs(e.x - CENTER):
+        curr_angle = atan2(e.y - ViewContext.window_center, e.x - ViewContext.window_center)
+        if abs(cos(curr_angle)*ViewContext.back_radius) > abs(e.x - ViewContext.window_center):
             curr_choice = self._back_choice
         else:
             i = int(((degrees(curr_angle) + 90) / (360/len(self._choices)) + len(self._choices)) % len(self._choices))
@@ -67,32 +68,38 @@ class Selector:
         self._selected = self._back_choice
         self._back_choice.draw()
 
-        self.canvas.bind("<Motion>", lambda e: self.on_motion(e))
-        self.canvas.bind("<Button-1>", lambda e: self.on_click(e))
-
     def show(self):
-        self._root = tk.Tk()
+        ViewContext.init()
 
-        self.canvas = tk.Canvas(self._root, width=SIZE, height=SIZE, highlightthickness=0, bg="black")
+        self._root = tk.Tk()
+        self.canvas = tk.Canvas(self._root,
+                                width=ViewContext.window_size,
+                                height=ViewContext.window_size,
+                                highlightthickness=0,
+                                bg="black")
         self.canvas.grid()
 
         self._root.overrideredirect(True)
-        self._root.geometry(f"{SIZE}x{SIZE}+{int(MOUSE_POS[0] - CENTER)}+{int(MOUSE_POS[1] - CENTER)}")
+        self._root.geometry(f"{ViewContext.window_size}"
+                            f"x{ViewContext.window_size}"
+                            f"+{ViewContext.mouse_pos[0] - ViewContext.window_center}"
+                            f"+{ViewContext.mouse_pos[1] - ViewContext.window_center}")
         self._root.lift()
         self._root.wm_attributes("-topmost", True)
         # self._root.wm_attributes("-disabled", True)
         self._root.wm_attributes("-transparentcolor", "black")
 
-        self._root.bind('<Escape>', lambda e: self.hide())
-        self._root.bind("<FocusOut>", lambda e: self.hide())
+        self.canvas.bind("<Escape>", self.hide)
+        self.canvas.bind("<FocusOut>", self.hide)
+        self.canvas.bind("<Motion>", self.on_motion)
+        self.canvas.bind("<Button-1>", self.on_click)
 
         self.draw()
-
-        self._root.focus_force()
+        self.canvas.focus_force()
 
         self._root.mainloop()
 
-    def hide(self):
+    def hide(self, *args):
         self._logger.info("Closing selector")
         self.reset_choices()
         self._root.destroy()

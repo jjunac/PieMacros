@@ -1,6 +1,7 @@
 from math import *
 
 from .constants import *
+from .view_context import ViewContext
 
 class Choice:
     def __init__(self, **kwargs):
@@ -23,13 +24,19 @@ class Choice:
         extent = -360/n
         start = 90 + i*extent
         self.color = MATERIAL_COLORS[SELECTOR_COLORS[round(len(SELECTOR_COLORS)*i/n)]]
-        self.canvas_id = self.get_canvas().create_circle_arc(CENTER, CENTER, RADIUS,
-                                                       start=start,
-                                                       extent=extent,
-                                                       fill=self.get_base_color(),
-                                                       outline="white",
-                                                       width=BORDER)
-        text_pos = (CENTER + cos(radians(start + extent/2))*RADIUS*0.7, CENTER - sin(radians(start + extent/2))*RADIUS*0.7)
+        if n == 1:
+            self.canvas_id = self.get_canvas().create_circle(ViewContext.window_center, ViewContext.window_center, ViewContext.selector_radius,
+                                                             fill=self.get_base_color(),
+                                                             outline="white",
+                                                             width=ViewContext.border_width)
+        else:
+            self.canvas_id = self.get_canvas().create_circle_arc(ViewContext.window_center, ViewContext.window_center, ViewContext.selector_radius,
+                                                                 start=start,
+                                                                 extent=extent,
+                                                                 fill=self.get_base_color(),
+                                                                 outline="white",
+                                                                 width=ViewContext.border_width)
+        text_pos = (ViewContext.window_center + cos(radians(start + extent/2))*ViewContext.selector_radius*0.7, ViewContext.window_center - sin(radians(start + extent/2))*ViewContext.selector_radius*0.7)
         self.get_canvas().create_text(*text_pos,
                            text=self.name,
                            fill="white",
@@ -46,7 +53,7 @@ class BackChoice(Choice):
 
     def draw(self):
         self.color = MATERIAL_COLORS["grey"]
-        self.canvas_id = self.get_canvas().create_circle(CENTER, CENTER, SIZE*.15, fill=self.get_base_color(), outline="white", width=BORDER)
+        self.canvas_id = self.get_canvas().create_circle(ViewContext.window_center, ViewContext.window_center, ViewContext.back_radius, fill=self.get_base_color(), outline="white", width=ViewContext.border_width)
         return self.canvas_id
 
     def execute(self):
