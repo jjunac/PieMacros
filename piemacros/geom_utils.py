@@ -1,4 +1,4 @@
-from math import sin, cos, degrees, radians, atan2
+from math import cos, degrees, atan2
 
 class GeomUtils:
     @staticmethod

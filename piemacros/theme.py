@@ -3,7 +3,6 @@ from pathlib import Path
 import yaml
 
 
-
 class Theme:
 
     @dataclass

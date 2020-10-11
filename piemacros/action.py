@@ -23,6 +23,7 @@ class Action(ABC):
     def execute(self):
         raise NotImplementedError
 
+
 @register_action("alert")
 class AlertAction(Action):
     def __init__(self, args):
@@ -30,6 +31,7 @@ class AlertAction(Action):
 
     def execute(self):
         tk.messagebox.showinfo(title="PieMacros", message=self.text)
+
 
 @register_action("mouse_to")
 class MoveMouseAction(Action):
@@ -39,6 +41,7 @@ class MoveMouseAction(Action):
     def execute(self):
         pyautogui.moveTo(self.x, self.y)
 
+
 @register_action("wait")
 class WaitAction(Action):
     def __init__(self, args):
@@ -47,6 +50,7 @@ class WaitAction(Action):
     def execute(self):
         time.sleep(self.timeout)
 
+
 @register_action("hotkey")
 class HotkeyAction(Action):
     def __init__(self, args):
@@ -54,6 +58,7 @@ class HotkeyAction(Action):
 
     def execute(self):
         pyautogui.hotkey(*self.keys)
+
 
 @register_action("type")
 class TypeAction(Action):

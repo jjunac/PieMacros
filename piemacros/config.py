@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 from .action import Action
-from .choice import *
+from .choice import Choice, CompositeChoice
 from .logging_utils import logger
 
 @logger

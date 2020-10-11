@@ -1,24 +1,14 @@
 from dataclasses import dataclass
-from typing import Tuple
 import pyautogui
 import tkinter as tk
 
 from .logging_utils import logger
-from .selector import Selector
 from .panels import SelectorPanel
 
 @logger
 class View:
     @dataclass
     class Context:
-        # screen_size: Tuple[int, int]
-        # mouse_pos: Tuple[int, int]
-        # border_width: int
-        # window_size: int
-        # window_center: int
-        # selector_radius: int
-        # back_radius: int
-
         def __init__(self, screen_size, mouse_pos):
             self.screen_size      = screen_size
             self.mouse_pos        = mouse_pos
@@ -36,6 +26,7 @@ class View:
         self._root = None
 
     def draw(self):
+        self.canvas.delete("all")
         self._selector_panel.draw(self.canvas, self.ctx)
 
     def on_motion(self, e):
@@ -54,7 +45,6 @@ class View:
             self.hide()
 
     def show(self):
-        # ViewContext.init()
         self.ctx = View.Context(pyautogui.size(), pyautogui.position())
         self._root = tk.Tk()
         self.canvas = tk.Canvas(self._root,

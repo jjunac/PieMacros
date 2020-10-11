@@ -5,8 +5,6 @@ from ctypes import wintypes
 from enum import IntEnum
 import ctypes
 import itertools
-import os
-import sys
 import win32con
 import time
 
@@ -15,10 +13,6 @@ from .logging_utils import logger
 byref = ctypes.byref
 user32 = ctypes.windll.user32
 
-HOTKEYS = {
-1 : (ord('A'), win32con.MOD_WIN + win32con.MOD_SHIFT),
-2 : (win32con.VK_F4, win32con.MOD_WIN)
-}
 
 class Modifiers(IntEnum):
     SHIFT   = win32con.MOD_SHIFT

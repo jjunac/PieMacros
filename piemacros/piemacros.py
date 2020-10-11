@@ -1,10 +1,9 @@
 import logging
 from infi.systray import SysTrayIcon
 
-from .action import *
-from .choice import *
+# from .action import *
+# from .choice import *
 from .config import ConfigParser
-from .constants import *
 from .global_hotkey import GlobalHotkey, Modifiers
 from .logging_utils import init_logging
 from .selector import Selector
@@ -32,7 +31,6 @@ def run():
     _systray = SysTrayIcon(None, "PieMacros", menu_options, on_quit=lambda e: stop())
     _systray.start()
 
-    # GlobalHotkey.register('A', (Modifiers.WIN, Modifiers.SHIFT), lambda: _view.show())
     GlobalHotkey.register('A', (Modifiers.WIN, Modifiers.SHIFT), _selector.init_choices)
     try:
         GlobalHotkey.listen()
