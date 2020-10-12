@@ -10,6 +10,8 @@ from .selector import Selector
 from .tkutils import decorate_tkinter
 from .view import View
 
+from .plugins import *
+
 _selector = None
 _systray = None
 _view = None

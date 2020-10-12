@@ -1,4 +1,6 @@
+from .logging_utils import logger
 
+@logger
 class Choice:
     def __init__(self, **kwargs):
         self.name = kwargs["name"]
@@ -9,6 +11,7 @@ class Choice:
     def execute(self):
         self.selector.reset_choices()
         for a in self.actions:
+            self._logger.info("Executing action: %s", type(a).__name__)
             a.execute()
 
 

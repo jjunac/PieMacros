@@ -2,9 +2,7 @@
   subchoices:
     - name: Go on twitter
       actions:
-        - hotkey: [ctrl, t]
-        - type: twitter.com
-        - type: ['enter']
+        - browser.new_tab: twitter.com
 - name: Mouse sub
   subchoices:
     - name: Right
