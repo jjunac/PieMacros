@@ -13,7 +13,8 @@ class ConfigParser:
 
     def parse(self):
         config_dict = yaml.safe_load(Path(self.filename).read_text())
-        self.choices = [self._parse_choice(c) for c in config_dict]
+        self.theme = config_dict["theme"]
+        self.choices = [self._parse_choice(c) for c in config_dict["choices"]]
         return self
 
     def _parse_choice(self, choice_dict):

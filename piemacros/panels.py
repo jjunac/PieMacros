@@ -28,10 +28,10 @@ class SelectorPanel:
         extent = 360 / nb_choices
         for i, c in enumerate(self._selector.get_current_choices()):
             start -= extent
-            cp = ChoicePanel(c, Theme.get_choice_color(i, nb_choices))
+            cp = ChoicePanel(c, Theme.get().get_choice_color(i, nb_choices))
             cp.draw(canvas, ctx, start, extent)
             self._choice_panels.append(cp)
-        self._back_choice_panel = BackChoicePanel(self._selector.get_back_choice(), Theme.get_back_color())
+        self._back_choice_panel = BackChoicePanel(self._selector.get_back_choice(), Theme.get().get_back_color())
         self._back_choice_panel.draw(canvas, ctx)
 
         self._selected_panel = None
@@ -81,7 +81,7 @@ class ChoicePanel:
         self._canvas.create_text(*text_pos,
                            text=self._choice.name,
                            fill="white",
-                           font=('Helvetica', '16'))
+                           font=('Helvetica', '14'))
 
 
 @logger

@@ -1,12 +1,11 @@
 import logging
 from infi.systray import SysTrayIcon
 
-# from .action import *
-# from .choice import *
 from .config import ConfigParser
 from .global_hotkey import GlobalHotkey, Modifiers
 from .logging_utils import init_logging
 from .selector import Selector
+from .theme import Theme
 from .tkutils import decorate_tkinter
 from .view import View
 
@@ -21,6 +20,8 @@ def run():
     decorate_tkinter()
 
     cp = ConfigParser("test_config.yaml").parse()
+
+    Theme.set(cp.theme if cp.theme else "rainbow")
 
     _selector = Selector(cp.choices)
     _view = View(_selector)

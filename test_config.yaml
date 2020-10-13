@@ -1,22 +1,24 @@
-- name: Integration tests
-  subchoices:
-    - name: Go on twitter
-      actions:
-        - browser.new_tab: twitter.com
-- name: Mouse sub
-  subchoices:
-    - name: Right
-      actions:
-        - mouse_to: 1700 400
-        - wait: 2
-        - mouse_to: 1700 500
-        - wait: 2
-        - mouse_to: 1700 600
-    - name: Left
-      actions:
-        - mouse_to: 200 400
-- name: Hello
-  actions:
-    - alert: Hello
+theme: dark
+choices:
+  - name: Integration tests
+    subchoices:
+      - name: Go on twitter
+        actions:
+          - browser.new_tab: twitter.com
+  - name: Mouse sub
+    subchoices:
+      - name: Right
+        actions:
+          - mouse_to: 1700 400
+          - wait: 2
+          - mouse_to: 1700 500
+          - wait: 2
+          - mouse_to: 1700 600
+      - name: Left
+        actions:
+          - mouse_to: 200 400
+  - name: Hello
+    actions:
+      - alert: Hello
 
 
